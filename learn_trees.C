@@ -20,7 +20,7 @@ void learn_trees(){
   auto energy_max=10;
   auto nentries=nu_energy->GetBranch()->GetEntries();
 
-  for (int i=0);i<nentries;i++){
+  for (int i=0;i<nentries;i++){
     nu_energy->GetBranch()->GetEntry(i);
     auto energy=nu_energy->GetValue();
     if (energy<energy_min) energy_min=energy;
