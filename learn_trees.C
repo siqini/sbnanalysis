@@ -40,8 +40,8 @@ void learn_trees(){
   std::cout<<"E_min: "<<E_min<<std::endl;
   std::cout<<"E_max: "<<E_max<<std::endl;
   */
-  TLeaf* nu_energy=mytree->GetLeaf("interactions.neutrino.energy");
-  TLeaf* nu_type=mytree->GetLeaf("interactions.neutrino.genie_intcode");
+  TLeaf* nu_energy=myTree->GetLeaf("interactions.neutrino.energy");
+  TLeaf* nu_type=myTree->GetLeaf("interactions.neutrino.genie_intcode");
   auto energy_min=10;
   auto energy_max=0;
   auto nentries=nu_energy->GetBranch()->GetEntries();
