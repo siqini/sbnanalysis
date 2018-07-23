@@ -21,9 +21,9 @@ void learn_trees(){
   genieintcode -> SetAddress(&event);
 
   //find min and max of energies
-  auto E_min=10;
+  auto E_min=20;
   auto E_max=0;
-  for (int =0;i<nevent;i++){
+  for (int i =0;i<nevent;i++){
     auto this_energy = nu_energies->GetEntry(i);
     if (this_energy < E_min){
       E_min=this_energy;
@@ -31,6 +31,7 @@ void learn_trees(){
     if (this_energy > E_max){
       E_max=this_energy;
     }
+    std::cout<<"E_"<<i<<": "<<this_energy<<std::endl;
   }
 
   std::cout<<"number of events: "<<nevent<<std::endl;
