@@ -13,17 +13,18 @@ void learn_trees(){
   TFile *myFile=new TFile("output_ExampleAnalysis_ExampleSelection.root");
   TTree *myTree=(TTree*)myFile->Get("sbnana");
   myTree->Print();
-
-  auto genieintcode = myTree->GetBranch("interactions.neutrino.genie_intcode");
-  auto nu_energies = myTree->GetBranch("interactions.neutrino.energy");
+  /*
+  //auto genieintcode = myTree->GetBranch("interactions.neutrino.genie_intcode");
+  TBranch* nu_energies=0;
+  //auto nu_energies = myTree->GetBranch("interactions.neutrino.energy");
   auto nevent = myTree->GetEntries();
-  Event *event = new Event();
-  genieintcode -> SetAddress(&event);
-  nu_energies ->SetAddress(&event);
+  Double_t *double_entry = 0;
+  //nu_energies -> SetAddress(&event);
 
   //find min and max of energies
   auto E_min=20;
   auto E_max=0;
+  myTree->SetBranchAddress("interactions.neutrino.energy", &double_entry, &nu_energies);
   for (int i =0;i<nevent;i++){
     auto this_energy = nu_energies->GetEntry(i);
     if (this_energy < E_min){
@@ -38,18 +39,11 @@ void learn_trees(){
   std::cout<<"number of events: "<<nevent<<std::endl;
   std::cout<<"E_min: "<<E_min<<std::endl;
   std::cout<<"E_max: "<<E_max<<std::endl;
-
-
-
-
-
-
-  //mytree->Print();
-/*
+  */
   TLeaf* nu_energy=mytree->GetLeaf("interactions.neutrino.energy");
   TLeaf* nu_type=mytree->GetLeaf("interactions.neutrino.genie_intcode");
-  auto energy_min=0;
-  auto energy_max=10;
+  auto energy_min=10;
+  auto energy_max=0;
   auto nentries=nu_energy->GetBranch()->GetEntries();
   auto ntypes=nu_type->GetBranch()->GetEntries();
   for (int i=0;i<nentries;i++){
@@ -61,7 +55,7 @@ void learn_trees(){
   std::cout<<"# energy entries:"<<" "<<nentries<<std::endl;
   std::cout<<"energy min: "<<energy_min<<std::endl;
   std::cout<<"energy max: "<<energy_max<<std::endl;
-*/
+
 
 /*
   THStack* parents=new THStack("parents", "parent particles");
