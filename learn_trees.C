@@ -51,6 +51,7 @@ void learn_trees(){
     auto energy=nu_energy->GetValue();
     if (energy<energy_min) energy_min=energy;
     if (energy>energy_max) energy_max=energy;
+    std::cout<<energy<<std::endl;
   }
   std::cout<<"# energy entries:"<<" "<<nentries<<std::endl;
   std::cout<<"energy min: "<<energy_min<<std::endl;
