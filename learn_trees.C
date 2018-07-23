@@ -19,6 +19,7 @@ void learn_trees(){
   auto nevent = myTree->GetEntries();
   Event *event = new Event();
   genieintcode -> SetAddress(&event);
+  nu_energies ->SetAddress(&event);
 
   //find min and max of energies
   auto E_min=20;
