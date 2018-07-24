@@ -43,6 +43,8 @@ void learn_trees(){
     std::cout<<std::endl;
   }
 
+    THStack* parents=new THStack("parents", "parent_particles");
+
 
   }
 
@@ -93,12 +95,3 @@ void learn_trees(){
   std::cout<<"energy min: "<<energy_min<<std::endl;
   std::cout<<"energy max: "<<energy_max<<std::endl;
 */
-
-/*
-  THStack* parents=new THStack("parents", "parent particles");
-  for (int i=0;i<ntypes;i++){
-    nu_energy->GetBranch()->GetEntry(i);
-    nu_type->GetBranch()->GetEntry(i);
-    auto energy=nu_energy->GetValue(); //read the ith neutrino energy (double)
-    auto type=nu_type->GetValue();} //read the ith neutrino type (int)
-    */
