@@ -4,6 +4,7 @@
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
+#include ><algorithm>
 
 void AnalyzeTree(){
   TFile *myFile = TFile::Open("genie_only_2000_output.root");
@@ -60,7 +61,8 @@ void AnalyzeTree(){
       auto this_type = int_nu_genie_intcode2[iParticle];
       auto this_energy = int_nu_e2[iParticle];
       int type = (int) this_type;
-      hists[type]->Fill(this_energy);
+      int type_index = std::find(genie_intcodes_vec.begin(), genie_intcodes_vec.end(), type) - genie_intcodes_vec.begin();
+      hists[type_index]->Fill(this_energy);
     }
   }
 
