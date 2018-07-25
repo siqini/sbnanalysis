@@ -17,6 +17,7 @@ void AnalyzeTree(){
   TTreeReader myReader("sbnana", myFile);
 
   TTreeReaderArray<Int_t> int_nu_genie_intcode (myReader, "interactions.neutrino.genie_intcode");
+  TTreeReaderArray<Double_t> int_nu_e(myReader, "interactions.neutrino.energy");
   vector<Int_t> genie_intcodes_vec;
   while (myReader.Next()){
     for (int iParticle=0;iParticle<int_nu_genie_intcode.GetSize();++iParticle){
@@ -50,16 +51,16 @@ void AnalyzeTree(){
       else if(num==10) hists[iHist]->SetFillColor(kSpring);
       else if(num==11) hists[iHist]->SetFillColor(kYellow);
   }
-
+/*
   TTreeReader myReader2("sbnana", myFile);
 
     TTreeReaderArray<Double_t> int_nu_e2(myReader2, "interactions.neutrino.energy");
     TTreeReaderArray<Int_t> int_nu_genie_intcode2 (myReader2, "interactions.neutrino.genie_intcode");
-
-  while (myReader2.Next()){
-    for (int iParticle=0;iParticle<int_nu_genie_intcode2.GetSize();++iParticle){
-      auto this_type = int_nu_genie_intcode2[iParticle];
-      auto this_energy = int_nu_e2[iParticle];
+*/
+  while (myReader.Next()){
+    for (int iParticle=0;iParticle<int_nu_genie_intcode.GetSize();++iParticle){
+      auto this_type = int_nu_genie_intcode[iParticle];
+      auto this_energy = int_nu_e[iParticle];
       int type = (int) this_type;
       int type_index = std::find(genie_intcodes_vec.begin(), genie_intcodes_vec.end(), type) - genie_intcodes_vec.begin();
       hists[type_index]->Fill(this_energy);
