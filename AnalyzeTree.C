@@ -4,7 +4,7 @@
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
-#include ><algorithm>
+#include <algorithm>
 
 void AnalyzeTree(){
   TFile *myFile = TFile::Open("genie_only_2000_output.root");
