@@ -6,31 +6,34 @@
 #include <TTreeReaderArray.h>
 
 void AnalyzeTree(){
-  TFile *myFile = TFile::Open("output_ExampleAnalysis_ExampleSelection.root");
+  TFile *myFile = TFile::Open("genie_only_2000_output.root");
   if (myFile==0){
     printf("File not correctly opened!\n");
     return;
   }
-  TTree *myTree=(TTree*)myFile->Get("sbnana");
-  auto nevent = myTree->GetEntries();
+  //TTree *myTree=(TTree*)myFile->Get("sbnana");
+  //auto nevent = myTree->GetEntries();
   TTreeReader myReader("sbnana", myFile);
   TTreeReaderArray<Double_t> int_nu_e(myReader, "interactions.neutrino.energy");
   TTreeReaderArray<Int_t> int_nu_genie_intcode (myReader, "interactions.neutrino.genie_intcode");
-  int genie_intcode_max=0;
-  vector<Int_t> genie_intcodes;
+  vector<Int_t> genie_intcodes_vec;
   while (myReader.Next()){
     for (int iParticle=0;iParticle<int_nu_genie_intcode.GetSize();++iParticle){
-      genie_intcodes.push_back(int_nu_genie_intcode[iParticle]);
-      if (int_nu_genie_intcode[iParticle]>genie_intcode_max){
-        genie_intcode_max=int_nu_genie_intcode[iParticle];
+      if (genie_intcodes_vec.empty()){ genie_intcodes_vec.push_back(int_nu_genie_intcode[iParticle]);}
+      else {
+        if (find(genie_intcodes_vec.begin(), genie_intcodes_vec.end(), int_nu_genie_intcode[iParticle])==genie_intcodes_vec.end()){
+          genie_intcodes_vec.push_back(int_nu_genie_intcode[iParticle]);
+        }
       }
     }
   }
   THStack* parents = new THStack("parents", "parentsParticles");
   srand(123456);
+  char buffer [30];
   vector<TH1D*> hists = vector<TH1D*>();
-  for (int iHist=0;iHist<genie_intcode_max;iHist++){
-    hists.push_back(new TH1D(" ","", 30,0,6 ));
+  for (int iHist=0;iHist<genie_intcodes_vec.size();iHist++){
+    sprintf(buffer, "%s%d","GenieCode", genie_intcodes_vec[iHist]);
+    hists.push_back(new TH1D(buffer,"", 50,0,10));
     auto num = rand()%12;
     if(num==0) hists[iHist]->SetFillColor(kOrange);
       else if(num==1) hists[iHist]->SetFillColor(kRed);
