@@ -14,7 +14,7 @@ void AnalyzeTree(){
   //TTree *myTree=(TTree*)myFile->Get("sbnana");
   //auto nevent = myTree->GetEntries();
   TTreeReader myReader("sbnana", myFile);
-  TTreeReaderArray<Double_t> int_nu_e(myReader, "interactions.neutrino.energy");
+
   TTreeReaderArray<Int_t> int_nu_genie_intcode (myReader, "interactions.neutrino.genie_intcode");
   vector<Int_t> genie_intcodes_vec;
   while (myReader.Next()){
@@ -27,6 +27,7 @@ void AnalyzeTree(){
       }
     }
   }
+  std::cout<<genie_intcodes_vec.size()<<std::endl;
   THStack* parents = new THStack("parents", "parentsParticles");
   srand(123456);
   char buffer [30];
@@ -49,6 +50,7 @@ void AnalyzeTree(){
       else if(num==11) hists[iHist]->SetFillColor(kYellow);
   }
 
+    TTreeReaderArray<Double_t> int_nu_e(myReader, "interactions.neutrino.energy");
   while (myReader.Next()){
     for (int iParticle=0;iParticle<int_nu_genie_intcode.GetSize();++iParticle){
       auto this_type = int_nu_genie_intcode[iParticle];
