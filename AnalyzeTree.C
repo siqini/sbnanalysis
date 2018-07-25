@@ -17,7 +17,6 @@ void AnalyzeTree(){
   TTreeReader myReader("sbnana", myFile);
 
   TTreeReaderArray<Int_t> int_nu_genie_intcode (myReader, "interactions.neutrino.genie_intcode");
-  //TTreeReaderArray<Double_t> int_nu_e(myReader, "interactions.neutrino.energy");
   vector<Int_t> genie_intcodes_vec;
   while (myReader.Next()){
     for (int iParticle=0;iParticle<int_nu_genie_intcode.GetSize();++iParticle){
@@ -57,8 +56,8 @@ void AnalyzeTree(){
     TTreeReaderArray<Double_t> int_nu_e2(myReader2, "interactions.neutrino.energy");
     TTreeReaderArray<Int_t> int_nu_genie_intcode2 (myReader2, "interactions.neutrino.genie_intcode");
 
-  while (myReader.Next()){
-    for (int iParticle=0;iParticle<int_nu_genie_intcode.GetSize();++iParticle){
+  while (myReader2.Next()){
+    for (int iParticle=0;iParticle<int_nu_genie_intcode2.GetSize();++iParticle){
       auto this_type = int_nu_genie_intcode2[iParticle];
       auto this_energy = int_nu_e2[iParticle];
       int type = (int) this_type;
