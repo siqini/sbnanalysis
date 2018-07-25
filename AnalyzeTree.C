@@ -50,13 +50,17 @@ void AnalyzeTree(){
       else if(num==11) hists[iHist]->SetFillColor(kYellow);
   }
 
-    TTreeReaderArray<Double_t> int_nu_e(myReader, "interactions.neutrino.energy");
-    myReader.Restart();
-  while (myReader.Next()){
-    for (int iParticle=0;iParticle<int_nu_genie_intcode.GetSize();++iParticle){
-      auto this_type = int_nu_genie_intcode[iParticle];
-      auto this_energy = int_nu_e[iParticle];
-      hists[this_type]->Fill(this_energy);
+  TTreeReader myReader2("sbnana", myFile);
+
+    TTreeReaderArray<Double_t> int_nu_e2(myReader2, "interactions.neutrino.energy");
+    TTreeReaderArray<Int_t> int_nu_genie_intcode2 (myReader2, "interactions.neutrino.genie_intcode");
+
+  while (myReader2.Next()){
+    for (int iParticle=0;iParticle<int_nu_genie_intcode2.GetSize();++iParticle){
+      auto this_type = int_nu_genie_intcode2[iParticle];
+      auto this_energy = int_nu_e2[iParticle];
+      int type = (int) this_type;
+      hists[type]->Fill(this_energy);
     }
   }
 
