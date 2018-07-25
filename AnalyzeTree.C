@@ -51,6 +51,7 @@ void AnalyzeTree(){
   }
 
     TTreeReaderArray<Double_t> int_nu_e(myReader, "interactions.neutrino.energy");
+    myReader->Restart();
   while (myReader.Next()){
     for (int iParticle=0;iParticle<int_nu_genie_intcode.GetSize();++iParticle){
       auto this_type = int_nu_genie_intcode[iParticle];
