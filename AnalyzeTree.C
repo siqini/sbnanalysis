@@ -35,7 +35,7 @@ void AnalyzeTree(){
   vector<TH1D*> hists = vector<TH1D*>();
   for (int iHist=0;iHist<genie_intcodes_vec.size();iHist++){
     sprintf(buffer, "%s%d","GenieCode", genie_intcodes_vec[iHist]);
-    hists.push_back(new TH1D(buffer,"", 50,0,10));
+    hists.push_back(new TH1D(buffer,"", 50,0,6));
     auto num = rand()%12;
     if(num==0) hists[iHist]->SetFillColor(kOrange);
       else if(num==1) hists[iHist]->SetFillColor(kRed);
