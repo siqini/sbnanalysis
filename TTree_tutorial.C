@@ -10,7 +10,7 @@ void TTree_tutorial(){
   Exercises from the Introductory Tutorials: https://root.cern.ch/introductory-tutorials
   */
   TH1F *hPosX;
-  /*
+  /* 
   Calculate the sum of all event sizes
   */
   //variables used to store the data

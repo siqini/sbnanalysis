@@ -70,6 +70,8 @@ protected:
   /** Custom data branches */
   int fNuCount;  //!< Number of neutrino interactions in the event
   int fMyVar;  //!< Another variable of interest
+  Double_t fEnergyMax;
+  Double_t fEnergyMin;
 
   /** Histograms */
   TH2D* fNuVertexXZHist;  //!< Neutrino vertex XZ projection

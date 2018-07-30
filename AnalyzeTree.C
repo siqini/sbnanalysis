@@ -5,16 +5,20 @@
 #include <TTreeReaderValue.h>
 #include <TTreeReaderArray.h>
 #include <algorithm>
+/*
+* This script reads a given output file from the analysis code that contains data written in the form of a
+* TTree using TTreeReader; in particular, we read the particle types and energies, and plot a stacked
+* histogram by combining histograms of different particle types, indicated by different filled colors, of
+* number of particles v. energies.
+*/
 
 void AnalyzeTree(){
   TFile *myFile = TFile::Open("genie_only_2000_output.root");
   if (myFile==0){
     printf("File not correctly opened!\n");
     return;
-  }
-  //TTree *myTree=(TTree*)myFile->Get("sbnana");
-  //auto nevent = myTree->GetEntries();
-  TTreeReader myReader("sbnana", myFile);
+  } //if the file is not correctly opened, spit out an error message
+  TTreeReader myReader("sbnana", myFile); //create a TTreeReader
 
   TTreeReaderArray<Int_t> int_nu_genie_intcode (myReader, "interactions.neutrino.genie_intcode");
   vector<Int_t> genie_intcodes_vec;
@@ -24,13 +28,14 @@ void AnalyzeTree(){
       else {
         if (find(genie_intcodes_vec.begin(), genie_intcodes_vec.end(), int_nu_genie_intcode[iParticle])==genie_intcodes_vec.end()){
           genie_intcodes_vec.push_back(int_nu_genie_intcode[iParticle]);
-        }
-      }
-    }
-  }
+        } //if statement that "pushes back" the intcode to the vector genie_intcodes_vec if it is unique
+      }//if-else statement that only "pushes back" the read intcode into the vector genie_intcodes_vec if a)the vector is empty b)the intcode is unique for now
+    }//loop through every particle in this event
+  }//loop through all events
+
   std::cout<<genie_intcodes_vec.size()<<std::endl;
   THStack* parents = new THStack("parents", "parentsParticles");
-  srand(123456);
+  srand(123);
   char buffer [30];
   vector<TH1D*> hists = vector<TH1D*>();
   for (int iHist=0;iHist<genie_intcodes_vec.size();iHist++){
@@ -70,11 +75,4 @@ void AnalyzeTree(){
     parents->Add(hists[i]);
   }
   parents->Draw();
-
-
-
-
-
-
-
 }

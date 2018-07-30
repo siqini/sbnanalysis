@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<!-- Production Project -->
+
+<!DOCTYPE project [
+<!ENTITY relsim "v06_80_00">
+<!ENTITY file_type "mc">
+<!ENTITY run_type "physics">
+<!ENTITY name "gen_g4_test">
+<!ENTITY tag "tutorial">
+]>
+
+<job>
+
+<project name="&name;">
+
+  <!-- group name -->
+  <group>sbnd</group>
+  
+  <!-- Project size -->
+  <numevents>50</numevents>
+
+  <!-- Operating System -->
+  <os>SL6</os>
+
+  <!-- Batch resources -->
+  <resource>DEDICATED, OPPORTUNISTIC</resource>
+
+  <!-- Larsoft information -->
+  <larsoft>
+    <tag>&relsim;</tag>
+    <qual>e9</qual>
+    <local>/pnfs/sbnd/persistent/users/mastbaum/tars/sbncode-v06_80_00-ub.tar.gz</local>
+  </larsoft>
+
+  <!-- Validate on worker -->
+  <check>0</check>
+
+<!-- Project stages -->
+
+<stage name="gen">
+  <fcl>prodgenie_bnb_nu_sbn_sbnd.fcl</fcl>
+  <outdir>/pnfs/sbnd/scratch/users/siqini/sbncode_out/&tag;/&relsim;/gen/&name;</outdir>
+  <logdir>/pnfs/sbnd/scratch/users/siqini/sbncode-out/&tag;/&relsim;/gen/&name;</logdir>
+  <workdir>/pnfs/sbnd/scratch/users/siqini/work/&tag;/&relsim;/gen/&name;</workdir>
+  <output>prodgenie_bnb_nu_sbn_sbnd_${PROCESS}_%tc_gen.root</output>
+  <numjobs>1</numjobs>
+  <datatier>generated</datatier>
+  <defname>&name;_&tag;_gen</defname>
+</stage>
+
+<stage name="g4">
+  <fcl>standard_g4_sbn_sbnd.fcl</fcl>
+  <outdir>/pnfs/sbnd/scratch/users/siqini/sbncode_out/&tag;/&relsim;/g4/&name;</outdir>
+  <logdir>/pnfs/sbnd/scratch/users/siqini/sbncode-out/&tag;/&relsim;/g4/&name;</logdir>
+  <workdir>/pnfs/sbnd/scratch/users/siqini/work/&tag;/&relsim;/g4/&name;</workdir>
+  <numjobs>1</numjobs>
+  <datatier>simulated</datatier>
+  <defname>&name;_&tag;_g4</defname>
+</stage>
+
+<!-- file type -->
+<filetype>&file_type;</filetype>
+
+<!-- run type -->
+<runtype>&run_type;</runtype>
+
+</project>
+
+</job>
