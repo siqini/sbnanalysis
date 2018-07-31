@@ -49,10 +49,17 @@ namespace ana{
       fEnergyMin=0.;
       //Grab a data product from the event
       auto const& mctruths = *ev.getValidHandle<std::vector<simb::MCTruth>>(fTruthTag);
+      auto const& mcfluxs = *ev.getValidHandle<std::vector<simb::MCFlux>>(fTruthTag);
+      assert(mctruths.size()==mcfluxs.size());
+
+      fNuCount = mctruths.size();
+      fParentPDG.clear();
+      fCCNC.clear();
 
       //Iterate through the neutrinos
       for (size_t i=0;i<mctruths.size();i++){
         auto const& mctruth = mctruths.at(i);
+        auto const& mcflux = mcfluxs.at(i);
         auto mctruth_energy = mctruth.GetNeutrino().Nu().E();
         if (mctruth_energy > fEnergyMax) {
           fEnergyMax = &mctruth_energy;
@@ -60,7 +67,8 @@ namespace ana{
         if (mctruth_energy < fEnergyMin) {
           fEnergyMin = &mctruth_energy;
         }
-        fCCNC->push_back(mctruth.GetNeutrino().CCNC());
+        fParentPDG.push_back(mcflux.fptype);
+        fCCNC.push_back(mctruth.GetNeutrino().CCNC());
 
         fNuVertexXZHist->Fill(mctruth.GetNeutrino().Nu().Vx(), mctruth.GetNeutrino().Nu().Vz());
 

@@ -13,14 +13,14 @@
 */
 
 void AnalyzeTree(){
-  TFile *myFile = TFile::Open("genie_only_2000_output.root");
+  TFile *myFile = TFile::Open("output_ExampleAnalysis_ExampleSelection.root");
   if (myFile==0){
     printf("File not correctly opened!\n");
     return;
   } //if the file is not correctly opened, spit out an error message
   TTreeReader myReader("sbnana", myFile); //create a TTreeReader
 
-  TTreeReaderArray<Int_t> int_nu_genie_intcode (myReader, "interactions.neutrino.genie_intcode");
+  TTreeReaderArray<Int_t> int_nu_genie_intcode (myReader, "CCNC");
   vector<Int_t> genie_intcodes_vec;
   while (myReader.Next()){
     for (int iParticle=0;iParticle<int_nu_genie_intcode.GetSize();++iParticle){

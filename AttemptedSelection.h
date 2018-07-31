@@ -33,6 +33,7 @@ namespace ana{
       Double_t fEnergyMax;
       Double_t fEnergyMin;
       std::vector<Int_t> fCCNC;
+      std::vector<Int_t> fParentPDG;
 
       /*histograms*/
       TH2D* fNuVertexXZHist;

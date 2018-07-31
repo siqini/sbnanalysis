@@ -76,7 +76,7 @@ ifdh cp -r ${OUT} ${OUTDIR}/${OUT}/
 #file:///PATH/TO/submit.sh -c <config.fcl> -n <nevents> …
 
 #Note: so far this is the only command that works! Will fix job_submission.xml though.
-#$ jobsub_submit --memory=2000MB --group=sbnd \ --resource-provides=usage_model=OPPORTUNISTIC -N 500 \file:///sbnd/app/users/siqini/sbnanalysis/submit2.sh 
+#$ jobsub_submit --memory=2000MB --group=sbnd \ --resource-provides=usage_model=OPPORTUNISTIC -N 1 \file:///sbnd/app/users/siqini/sbnanalysis/submit2.sh 
 
 #$ jobsub_submit --memory=2000MB --group=sbnd \
 # --resource-provides=usage_model=OPPORTUNISTIC -N 1 \
