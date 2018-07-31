@@ -93,8 +93,12 @@ void CCNC_vector(){
   interaction_types->Add(hists[1]);
 
   interaction_types->Draw("nostack");
-  gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-
+  //gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+  auto legend = new TLegend (0.75,0.75,0.95,0.95);
+  legend->SetHeader("CC/NC interaction types", "C");
+  legend->AddEntry(h0,"CC->#mu + X","f");
+  legend->AddEntry(h1,"NC->#pi^{#pm} + X","f");
+  legend->Draw();
 
 
 
