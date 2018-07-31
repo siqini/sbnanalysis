@@ -4,6 +4,7 @@
 #include <vector>
 #include <typeinfo>
 #include <cstdlib>
+#include <string>
 
 void CCNC_vector(){
   TFile* myFile = TFile::Open("output_ExampleAnalysis_ExampleSelection.root");
@@ -65,6 +66,7 @@ void CCNC_vector(){
   //set fill colors
   //srand(123);
   //char buffer[10];
+
   for (int i=0;i<CCNC_unique.size();i++){
     TH1D *h = new TH1D(Form("h%d",i),"",100,0,10);
     hists.push_back(h);
@@ -91,6 +93,7 @@ void CCNC_vector(){
   interaction_types->Add(hists[1]);
 
   interaction_types->Draw("nostack");
+  gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 
 
 
