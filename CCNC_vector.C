@@ -22,7 +22,9 @@ void CCNC_vector(){
 
   //vector to store ccnc type info
   std::vector<int> CCNC_vec;
+  std::vector<int> CCNC_unique;
   std::vector<double> nu_energy_vec;
+
 
   for (long i=0;i<myTree->GetEntries();i++){
     myTree->GetEntry(i);
@@ -34,6 +36,14 @@ void CCNC_vector(){
       auto enu = event->interactions[j].neutrino.energy;
       auto ccnc_type = CCNC->at(j);
 
+      if (CCNC_unique.empty()){
+        CCNC_unique.push_back();
+      }
+      else {
+        if (find(CCNC_unique.begin(),CCNC_unique.end(),ccnc_type)==CCNC_unique.end()) CCNC_unique.push_back();
+      }
+
+
       CCNC_vec.push_back(ccnc_type);
       nu_energy_vec.push_back(enu);
 
@@ -44,40 +54,43 @@ void CCNC_vector(){
   //  std::cout<<std::endl;
   }
 
+  std::cout<<"# int types="<<CCNC_unique.size()<<std::endl;
+
   assert (CCNC_vec.size()==nu_energy_vec.size());
-  //THStack* interaction_types = new THStack("interaction_types", "Interaction types");
+  auto nparticles = CCNC_vec.size();
+  std::cout<< "# particles="<<nparticles<<std::endl;
+  THStack* interaction_types = new THStack("interaction_types", "Interaction types");
   std::vector<TH1D*>hists = std::vector<TH1D*>();
 
   //set fill colors
   srand(123);
   char buffer[10];
-  for (int iHist=0;iHist<2;iHist++){
+  for (long iHist=0;iHist<CCNC_unique.size();iHist++){
     sprintf(buffer,"%s%d","CCNC type",iHist);
     hists.push_back(new TH1D(buffer, "", 100, 0,10));
   }
-
-    hists[0]->SetFillColor(kViolet);
-    hists[1]->SetFillColor(kGreen);
+  std::cout<<"# histograms="<<hists.size()<<std::endl;
 
 
-  auto nparticles = CCNC_vec.size();
+
+
 
   for (long i=0;i<nparticles;i++){
     auto this_ccnc_type = CCNC_vec[i];
     auto this_nu_energy = nu_energy_vec[i];
-    int index = (int)this_ccnc_type;
 
-    hists[index]->Fill(this_nu_energy);
+    hists[this_ccnc_type]->Fill(this_nu_energy);
   }
 
+  hists[0]->SetFillColor(kViolet);
+  hists[1]->SetFillColor(kGreen);
 
 
 
+  interaction_types->Add(hists[0]);
+  interaction_types->Add(hists[1]);
 
-  //interaction_types->Add(hists[0]);
-  //interaction_types->Add(hists[1]);
-
-  hists[0]->Draw();
+  interaction_types->Draw();
 
 
 
