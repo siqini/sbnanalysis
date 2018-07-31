@@ -53,7 +53,7 @@ void CCNC_vector(){
   char buffer[10];
   for (int iHist=0;iHist<2;iHist++){
     sprintf(buffer,"%s%d","CCNC type",iHist);
-    hists.pushback(new TH1D(buffer, "", 100, 0,10));
+    hists.push_back(new TH1D(buffer, "", 100, 0,10));
   }
   hists[0]->SetFillColor(kViolet);
   hists[1]->SetFillColor(kGreen);
