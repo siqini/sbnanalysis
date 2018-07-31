@@ -1,9 +1,9 @@
-#include <cassert>
 #include <iostream>
+#include <math.h>
+#include <fstream>
 #include <vector>
-#include "TFile.h"
-#include "TTree.h"
-#include <Event.hh>
+#include <typeinfo>
+#include <cstdlib>
 
 void CCNC_vector(){
   TFile* myFile = TFile::Open("output_ExampleAnalysis_ExampleSelection.root");
