@@ -37,10 +37,10 @@ void CCNC_vector(){
       auto ccnc_type = CCNC->at(j);
 
       if (CCNC_unique.empty()){
-        CCNC_unique.push_back();
+        CCNC_unique.push_back(ccnc_type);
       }
       else {
-        if (find(CCNC_unique.begin(),CCNC_unique.end(),ccnc_type)==CCNC_unique.end()) CCNC_unique.push_back();
+        if (find(CCNC_unique.begin(),CCNC_unique.end(),ccnc_type)==CCNC_unique.end()) CCNC_unique.push_back(ccnc_type);
       }
 
 
