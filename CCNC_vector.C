@@ -69,10 +69,13 @@ void CCNC_vector(){
   hists[0].SetFillColor(kViolet);
   hists[1].SetFillColor(kGreen);
 
+  auto histptr_0 = &hists[0];
+  auto histptr_1 = &hists[1];
 
 
-  interaction_types->Add(hists[0]);
-  interaction_types->Add(hists[1]);
+
+  interaction_types->Add(histptr_0);
+  interaction_types->Add(histptr_1);
 
   interaction_types->Draw();
 
