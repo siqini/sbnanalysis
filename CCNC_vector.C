@@ -58,16 +58,19 @@ void CCNC_vector(){
   hists[0]->SetFillColor(kViolet);
   hists[1]->SetFillColor(kGreen);
 
-  for (int i=0;i<CCNC_vec.size();i++){
+  auto nparticles = CCNC_vec.size();
+
+  for (long i=0;i<nparticles;i++){
     auto this_ccnc_type = CCNC_vec[i];
     auto this_nu_energy = nu_energy_vec[i];
 
     hists[this_ccnc_type]->Fill(this_nu_energy);
   }
 
-  for (int iHist=0;iHist<2;iHist++){
-    interaction_types->Add(hists[iHist]);
-  }
+
+
+  interaction_types->Add(hists[0]);
+  interaction_types->Add(hists[1]);
 
   interaction_types->Draw();
 
