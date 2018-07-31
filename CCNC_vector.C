@@ -90,7 +90,7 @@ void CCNC_vector(){
   interaction_types->Add(hists[0]);
   interaction_types->Add(hists[1]);
 
-  interaction_types->Draw();
+  interaction_types->Draw("nostack");
 
 
 
