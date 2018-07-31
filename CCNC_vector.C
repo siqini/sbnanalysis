@@ -46,7 +46,7 @@ void CCNC_vector(){
 
   assert (CCNC_vec.size()==nu_energy_vec.size());
   THStack* interaction_types = new THStack("interaction_types", "Interaction types");
-  std::vector<TH1D*> hists = std::vector<TH1D*>();
+  std::vector<TH1D*>hists = std::vector<TH1D*>();
 
   //set fill colors
   srand(123);
@@ -55,8 +55,7 @@ void CCNC_vector(){
     sprintf(buffer,"%s%d","CCNC type",iHist);
     hists.push_back(new TH1D(buffer, "", 100, 0,10));
   }
-  hists[0]->SetFillColor(kViolet);
-  hists[1]->SetFillColor(kGreen);
+
 
   auto nparticles = CCNC_vec.size();
 
@@ -66,6 +65,9 @@ void CCNC_vector(){
 
     hists[this_ccnc_type]->Fill(this_nu_energy);
   }
+
+  hists[0]->SetFillColor(kViolet);
+  hists[1]->SetFillColor(kGreen);
 
 
 
