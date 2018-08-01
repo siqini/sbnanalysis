@@ -6,6 +6,11 @@
 #include "canvas/Utilities/InputTag.h"
 #include "nusimdata/SimulationBase/MCTruth.h"
 #include "nusimdata/SimulationBase/MCNeutrino.h"
+#include "lardataobj/MCBase/MCTrack.h"
+#include "lardataobj/MCBase/MCShower.h"
+#include "nusimdata/SimulationBase/MCParticle.h"
+#include "gallery/Event.h"
+#include <TLorentzVector.h>
 #include "ExampleSelection.h"
 #include "ExampleTools.h"
 
@@ -23,17 +28,24 @@ void ExampleSelection::Initialize(Json::Value* config) {
   // Load configuration parameters
   fMyParam = 0;
   fTruthTag = { "generator" };
+  fTrackTag = { "mcreco" };
+  fShowerTag = { "mcreco" };
 
   if (config) {
     fMyParam = (*config)["ExampleAnalysis"].get("parameter", 0).asInt();
     fTruthTag = { (*config)["ExampleAnalysis"].get("MCTruthTag", "generator").asString() };
+    fTrackTag = { (*config)["ExampleAnalysis"].get("MCTrackTag", "mcreco").asString()};
+    fShowerTag = { (*config)["ExampleAnalysis"].get("MCShowerTag","mcreco").asString()};
   }
 
   // Add custom branches
   AddBranch("nucount", &fNuCount);
   AddBranch("myvar", &fMyVar);
   AddBranch("CCNC",&fCCNC);
-  AddBranch("total_length",&fTotalLength);
+  AddBranch("track_length",&fTrackLength);
+  AddBranch("EndX",&fEndX);
+  AddBranch("EndY",&fEndY);
+  AddBranch("EndZ",&fEndZ);
   // Use some library code
   hello();
 }
@@ -53,13 +65,18 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
   fEventCounter++;
 
   // Grab a data product from the event
-  auto const& mctruths = *ev.getValidHandle<std::vector<simb::MCTruth>>(fTruthTag);
-  auto const& mctracks = *ev.getValidHandle<std::vector<sim::MCTrack>>(fTruthTag);
+  auto const& mctruths = *ev.getValidHandle<std::vector<simb::MCTruth> >(fTruthTag);
+  auto const& mctracks = *ev.getValidHandle<std::vector<sim::MCTrack> >(fTrackTag);
+  auto const& mcshowers = *ev.getValidHandle<std::vector<sim::MCShower> >(fShowerTag);
 
   // Fill in the custom branches
   fNuCount = mctruths.size();  // Number of neutrinos in this event
   fMyVar = fMyParam;
   fCCNC.clear();
+  fTrackLength.clear();
+  fEndX.clear();
+  fEndY.clear();
+  fEndZ.clear();
 
 
 
@@ -78,6 +95,10 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
   for (size_t j=0;j<mctracks.size();j++){
     auto const& mctrack = mctracks.at(j);
     fTrackLength.push_back((mctrack.End().Position().Vect()-mctrack.Start().Position().Vect()).Mag());
+
+    fEndX.push_back(mctrack.End().X());
+    fEndY.push_back(mctrack.End().Y());
+    fEndZ.push_back(mctrack.End().Z());
   }
 
   return true;

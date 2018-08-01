@@ -15,6 +15,7 @@
 
 // Includes
 #include <iostream>
+#include <string>
 #include "canvas/Utilities/InputTag.h"
 #include "core/SelectionBase.hh"
 
@@ -65,6 +66,8 @@ protected:
 
   /** Configuration parameters */
   art::InputTag fTruthTag;  //!< art tag for MCTruth information
+  art::InputTag fTrackTag; //!< art tag for MCTrack information
+  art::InputTag fShowerTag; //!< art tag for MCShower information
   int fMyParam;  //!< A parameter from the configuration file
 
   /** Custom data branches */
@@ -74,6 +77,9 @@ protected:
   /** my data branches **/
   std::vector<Int_t> fCCNC;
   std::vector<Double_t> fTrackLength;
+  std::vector<Double_t> fEndX;
+  std::vector<Double_t> fEndY;
+  std::vector<Double_t> fEndZ;
 
 
   /** Histograms */
