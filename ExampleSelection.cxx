@@ -32,7 +32,8 @@ void ExampleSelection::Initialize(Json::Value* config) {
   // Add custom branches
   AddBranch("nucount", &fNuCount);
   AddBranch("myvar", &fMyVar);
-
+  AddBranch("CCNC",&fCCNC);
+  AddBranch("total_length",&fTotalLength);
   // Use some library code
   hello();
 }
@@ -53,10 +54,14 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
 
   // Grab a data product from the event
   auto const& mctruths = *ev.getValidHandle<std::vector<simb::MCTruth>>(fTruthTag);
+  auto const& mctracks = *ev.getValidHandle<std::vector<sim::MCTrack>>(fTruthTag);
 
   // Fill in the custom branches
   fNuCount = mctruths.size();  // Number of neutrinos in this event
   fMyVar = fMyParam;
+  fCCNC.clear();
+
+
 
   // Iterate through the neutrinos
   for (size_t i=0; i<mctruths.size(); i++) {
@@ -65,6 +70,14 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
     // Fill neutrino vertex position histogram
     fNuVertexXZHist->Fill(mctruth.GetNeutrino().Nu().Vx(),
                           mctruth.GetNeutrino().Nu().Vz());
+
+    // Fill CCNC vector
+    fCCNC.push_back(mctruth.GetNeutrino().CCNC());
+  }
+
+  for (size_t j=0;j<mctracks.size();j++){
+    auto const& mctrack = mctracks.at(j);
+    fTrackLength.push_back((mctrack.End().Position().Vect()-mctrack.Start().Position().Vect()).Mag());
   }
 
   return true;
