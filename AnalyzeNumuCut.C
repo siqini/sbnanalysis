@@ -20,8 +20,8 @@ void AnalyzeNumuCut (){
   TTreeReaderValue<int> GoodNuCount (myReader, "good_nu_count");
   int totalGoodNuCount=0;
   while (myReader.Next()){
-    totalNuCount+=NuCount;
-    totalGoodNuCount+=GoodNuCount;
+    totalNuCount+= *NuCount;
+    totalGoodNuCount+= *GoodNuCount;
   }
 
   std::cout<<"Total nu count= "<<totalNuCount<<std::endl;
