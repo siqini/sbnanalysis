@@ -35,7 +35,10 @@ void AnalyzeNumuCut (){
   THStack *nustack = new THStack("nustack","Generated and reconstructed #nu_#mu");
   nustack->Add(nuhist);
   nustack->Add(goodnuhist);
+  nustack->GetXaxis()->SetTitle("Neutrino energy (GeV)");
+  nustack->GetYaxis()->SetTitle("# Events");
   nustack->Draw("nostack");
+
 
   auto legend = new TLegend(0.75,0.75,0.95,0.95);
   legend->AddEntry(nuhist, "Generated #nu_#mu");
