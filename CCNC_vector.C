@@ -18,8 +18,14 @@ void CCNC_vector(){
   //set up branches
   Event* event = new Event;
   std::vector<int>* CCNC = new std::vector<int>;
+  std::vector<Double_t>* EndX = new std::vector<Double_t>;
+  std::vector<Double_t>* EndY = new std::vector<Double_t>;
+  std::vector<Double_t>* EndZ = new std::vector<Double_t>;
   myTree->SetBranchAddress("events", &event);
   myTree->SetBranchAddress("CCNC",&CCNC);
+  myTree->SetBranchAddress("EndX",&EndX);
+  myTree->SetBranchAddress("EndY",&EndY);
+  myTree->SetBranchAddress("EndZ",&EndZ);
 
   //vector to store ccnc type info
   std::vector<int> CCNC_vec;

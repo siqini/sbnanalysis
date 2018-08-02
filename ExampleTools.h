@@ -19,6 +19,18 @@ namespace ana {
 /** A function that says hello. */
 void hello();
 
+/** A function that tells us whether we are looking at a muon track **/
+bool AreYouMuon (int pdgcode);
+
+/** A function that separates final state particles in or out of the TPC volume **/
+bool AreYouIn (Double_t finalX, Double_t finalY, Double_t finalZ); //true=in, false=not in
+
+/** A function that filters out MCTracks that are not primary **/
+bool AreYouPrimary (const sim::MCTrack& mct);
+
+
+
+
   }  // namespace ExampleAnalysis
 }  // namespace ana
 

@@ -17,13 +17,14 @@
 namespace ana {
   namespace ExampleAnalysis {
 
-ExampleSelection::ExampleSelection() : SelectionBase(), fNuCount(0), fEventCounter(0) {}
+ExampleSelection::ExampleSelection() : SelectionBase(), fNuCount(0), fEventCounter(0),fMuCount(0),fPrimaryMuCount(0),fGoodMuCunt(0),fGoodNuCount(0) {}
 
 
 void ExampleSelection::Initialize(Json::Value* config) {
   // Make a histogram
   fNuVertexXZHist = new TH2D("nu_vtx_XZ", "",
                              100, -1000, 1000, 100, -1000, 1000);
+  fGoodNuEHist = new TH1D ("good_nu_energy_hist","",100,0,10);
 
   // Load configuration parameters
   fMyParam = 0;
@@ -46,6 +47,17 @@ void ExampleSelection::Initialize(Json::Value* config) {
   AddBranch("EndX",&fEndX);
   AddBranch("EndY",&fEndY);
   AddBranch("EndZ",&fEndZ);
+  AddBranch("PDGCode",&fPDGCode);
+  AddBranch("mucount",&fNuCount);
+  AddBranch("primary_mu_count",&fPrimaryMuCount);
+  AddBranch("good_mu_count",&fGoodMuCount);
+  AddBranch("good_nu_count",&fGoodNuCount);
+  //AddBranch("NuEndX",&fNuEndX);
+  //AddBranch("NuEndY",&fNuEndY);
+  //AddBranch("NuEndZ",&fNuEndZ);
+  //AddBranch("NuEndPos",&fNuEndPos);
+  //AddBranch("MuStartPos",&fMuStartPos);
+  AddBranch("diff_length",&fDiffLength);
   // Use some library code
   hello();
 }
@@ -55,10 +67,15 @@ void ExampleSelection::Finalize() {
   // Output our histograms to the ROOT file
   fOutputFile->cd();
   fNuVertexXZHist->Write();
+  fGoodNuEHist->Write();
 }
 
 
 bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
+  //std::vector<const TLorentzVector&> NuEndPos;
+  //std::vector<const TLorentzVector&> MuStartPos;
+  std::vector<int> PrimaryMuonIndices;
+  std::vector<int> PrimaryMuonIndicesAfterCut;
   if (fEventCounter % 10 == 0) {
     std::cout << "ExampleSelection: Processing event " << fEventCounter << std::endl;
   }
@@ -77,6 +94,17 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
   fEndX.clear();
   fEndY.clear();
   fEndZ.clear();
+  //fNuEndX.clear();
+  //fNuEndY.clear();
+  //fNuEndZ.clear();
+  fPDGCode.clear();
+  //fNuEndPos.clear();
+  //fMuStartPos.clear();
+  fDiffLength.clear();
+  fMuCount =0;
+  fPrimaryMuCount=0;
+  fGoodMuCount=0;
+  fGoodNuCount=0;
 
 
 
@@ -90,8 +118,9 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
 
     // Fill CCNC vector
     fCCNC.push_back(mctruth.GetNeutrino().CCNC());
+    //NuEndPos.push_back(mctruth.GetNeutrino().Nu().EndPosition());
   }
-
+  //Iterate through all product tracks
   for (size_t j=0;j<mctracks.size();j++){
     auto const& mctrack = mctracks.at(j);
     fTrackLength.push_back((mctrack.End().Position().Vect()-mctrack.Start().Position().Vect()).Mag());
@@ -99,7 +128,58 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
     fEndX.push_back(mctrack.End().X());
     fEndY.push_back(mctrack.End().Y());
     fEndZ.push_back(mctrack.End().Z());
+    fPDGCode.push_back(mctrack.PdgCode());
+    bool IsMuon = (mctrack.PdgCode()==13);
+    bool IsPrimary = (mctrack.Process()=="primary");
+    if (IsMuon) {
+      fMuCount++;
+    }
+    if (IsPrimary && IsMuon) {
+      fPrimaryMuCount++;
+      PrimaryMuonIndices.push_back((int)j);
+      //MuStartPos.push_back(mctrack.Start().Position());
+    }
   }
+
+  for (auto iMu : PrimaryMuonIndices){
+    auto finalX = fEndX.at(iMu);
+    auto finalY = fEndY.at(iMu);
+    auto finalZ = fEndZ.at(iMu);
+    auto tracklength = fTrackLength.at(iMu);
+    if(((-199.15 < finalX && finalX < -2.65) || (2.65 < finalX && finalX < 199.15)) && (-200 < finalY && finalY < 200) && (0 < finalZ && finalZ < 500)) {
+      if (tracklength >=50.) {PrimaryMuonIndicesAfterCut.push_back(iMu);
+      }
+    }
+    else {
+      if (tracklength>=100.) {
+        PrimaryMuonIndicesAfterCut.push_back(iMu);
+      }
+    }
+  }
+  fGoodMuCount = (int)PrimaryMuonIndicesAfterCut.size();
+
+  for (auto k : PrimaryMuonIndicesAfterCut){
+    auto const& mct = mctracks.at(k);
+    std::vector<int> GoodNuIndices;
+    for (size_t l=0;l<mctruths.size();l++){
+      auto const& mctru = mctruths.at(l);
+      auto diff = (mct.Start().Position().Vect()- mctru.GetNeutrino().Nu().EndPosition().Vect()).Mag();
+      fDiffLength.push_back(diff);
+      //bool IsFromNuVtx = util::IsFromNuVertex(mctru,mct);
+      if (diff<=5.){
+          GoodNuIndices.push_back((int)l);
+      }
+      else continue;
+    }
+    if (GoodNuIndices.empty()) continue;
+    else {
+    int GoodNuIndex = GoodNuIndices.at(0);
+    auto GoodNuE = mctruths.at(GoodNuIndex).GetNeutrino().Nu().E();
+    fGoodNuEHist->Fill(GoodNuE);
+    fGoodNuCount++;
+    }
+  }
+
 
   return true;
 }

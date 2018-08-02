@@ -21,6 +21,7 @@
 
 // Forward declarations
 class TH2D;
+class TH1D;
 
 /** All analysis code is defined in namespace "ana" */
 namespace ana {
@@ -73,6 +74,10 @@ protected:
   /** Custom data branches */
   int fNuCount;  //!< Number of neutrino interactions in the event
   int fMyVar;  //!< Another variable of interest
+  int fMuCount;
+  int fPrimaryMuCount;
+  int fGoodMuCount;
+  int fGoodNuCount;
 
   /** my data branches **/
   std::vector<Int_t> fCCNC;
@@ -80,10 +85,19 @@ protected:
   std::vector<Double_t> fEndX;
   std::vector<Double_t> fEndY;
   std::vector<Double_t> fEndZ;
+  std::vector<int> fPDGCode;
+  //std::vector<const TLorentzVector&> fNuEndPos;
+  //std::vector<const TLorentzVector&> fMuStartPos;
+  std::vector<Double_t> fDiffLength;
+  //std::vector<Double_t> fNuEndX;
+  //std::vector<Double_t> fNuEndY;
+  //std::vector<Double_t> fNuEndZ;
+  //std::vector<simb::MCNeutrino> fGoodNu;
 
 
   /** Histograms */
-  TH2D* fNuVertexXZHist;  //!< Neutrino vertex XZ projection
+  TH2D* fNuVertexXZHist; //!< Neutrino vertex XZ projection
+  TH1D* fGoodNuEHist;
 };
 
   }  // namespace ExampleAnalysis
