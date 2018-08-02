@@ -32,12 +32,14 @@ void AnalyzeNumuCut (){
 
   nuhist->SetFillColor(kAzure);
   goodnuhist->SetFillColor(kViolet);
+  TCanvas *c = new TCanvas ("c", "Generated and recontructed hists",10,10,1000,800);
   THStack *nustack = new THStack("nustack","Generated and reconstructed #nu_#mu");
   nustack->Add(nuhist);
   nustack->Add(goodnuhist);
+  nustack->Draw("nostack");
   nustack->GetXaxis()->SetTitle("Neutrino energy (GeV)");
   nustack->GetYaxis()->SetTitle("# Events");
-  nustack->Draw("nostack");
+  c-> Modified();
 
 
   auto legend = new TLegend(0.75,0.75,0.95,0.95);
