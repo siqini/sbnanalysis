@@ -25,6 +25,7 @@ void ExampleSelection::Initialize(Json::Value* config) {
   fNuVertexXZHist = new TH2D("nu_vtx_XZ", "",
                              100, -1000, 1000, 100, -1000, 1000);
   fGoodNuEHist = new TH1D ("good_nu_energy_hist","",100,0,10);
+  fNuEhist = new TH1D ("nu_energy_hist","",100,0,10);
 
   // Load configuration parameters
   fMyParam = 0;
@@ -68,6 +69,7 @@ void ExampleSelection::Finalize() {
   fOutputFile->cd();
   fNuVertexXZHist->Write();
   fGoodNuEHist->Write();
+  fNuEHist->Write();
 }
 
 
@@ -115,6 +117,8 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
     // Fill neutrino vertex position histogram
     fNuVertexXZHist->Fill(mctruth.GetNeutrino().Nu().Vx(),
                           mctruth.GetNeutrino().Nu().Vz());
+    // Fill neutrino energy histogram
+    fNuEHist -> Fill(mctruth.GetNeutrino().Nu().E());
 
     // Fill CCNC vector
     fCCNC.push_back(mctruth.GetNeutrino().CCNC());

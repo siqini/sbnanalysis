@@ -12,6 +12,9 @@ void AnalyzeNumuCut (){
     printf("File not correctly opened!\n");
     return;
   } //if the file is not correctly opened, spit out an error message
+  TH1D *nuhist = (TH1D*)myFile->Get("nu_energy_hist");
+  TH1D *goodnuhist = (TH1D*)myFile->Get("good_nu_energy_hist");
+
   TTreeReader myReader("sbnana", myFile); //create a TTreeReader
 
   TTreeReaderValue<int> NuCount (myReader, "nucount");
@@ -26,5 +29,20 @@ void AnalyzeNumuCut (){
 
   std::cout<<"Total nu count= "<<totalNuCount<<std::endl;
   std::cout<<"Total good nu count= "<<totalGoodNuCount<<std::endl;
+
+  nuhist->SetFillColor(kAzure);
+  goodnuhist->SetFillColor(kViolet);
+  THStack *nustack = new THStack("nustack","Generated and reconstructed #nu_#mu");
+  nustack->Add(nuhist);
+  nustack->Add(goodnuhist);
+  nustack->Draw("nostack");
+
+  auto legend = new TLegend(0.75,0.75,0.95,0.95);
+  legend->AddEntry(nuhist, "Generated #nu_#mu");
+  legend->AddEntry(goodnuhist, "#nu_#mu reconstruted from muon tracks");
+  legend->Draw();
+
+
+
 
 }

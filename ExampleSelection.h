@@ -98,6 +98,7 @@ protected:
   /** Histograms */
   TH2D* fNuVertexXZHist; //!< Neutrino vertex XZ projection
   TH1D* fGoodNuEHist;
+  TH1D* fNuEHist;
 };
 
   }  // namespace ExampleAnalysis
