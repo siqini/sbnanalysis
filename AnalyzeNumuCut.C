@@ -37,12 +37,13 @@ void AnalyzeNumuCut (){
   nustack->Add(nuhist);
   nustack->Add(goodnuhist);
   nustack->Draw("nostack");
-  nustack->GetXaxis()->SetTitle("Neutrino energy (GeV)");
-  nustack->GetYaxis()->SetTitle("# Events");
   auto legend = new TLegend(0.75,0.75,0.95,0.95);
   legend->AddEntry(nuhist, "Generated #nu_#mu");
   legend->AddEntry(goodnuhist, "#nu_#mu reconstruted from muon tracks");
   legend->Draw();
+  nustack->GetXaxis()->SetTitle("Neutrino energy (GeV)");
+  nustack->GetYaxis()->SetTitle("# Events");
+
   c-> Modified();
 
 
