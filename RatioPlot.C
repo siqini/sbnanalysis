@@ -12,7 +12,7 @@ void RatioPlot(){
     printf("File not correctly opened!\n");
     return;
   } //if the file is not correctly opened, spit out an error message
-  TH1D *nuhist = (TH1D*)myFile->Get("nu_energy_hist");
+  TH1D *nuhist = (TH1D*)myFile->Get("initial_numu");
   TH1D *goodnuhist = (TH1D*)myFile->Get("good_nu_energy_hist");
 
   int nbins = nuhist->GetNbinsX();

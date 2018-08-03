@@ -17,7 +17,7 @@
 namespace ana {
   namespace ExampleAnalysis {
 
-ExampleSelection::ExampleSelection() : SelectionBase(), fNuCount(0), fEventCounter(0),fMuCount(0),fPrimaryMuCount(0),fGoodMuCunt(0),fGoodNuCount(0) {}
+ExampleSelection::ExampleSelection() : SelectionBase(), fNuCount(0), fEventCounter(0),fMuCount(0),fPrimaryMuCount(0),fGoodMuCount(0),fGoodNuCount(0) {}
 
 
 void ExampleSelection::Initialize(Json::Value* config) {
@@ -25,9 +25,11 @@ void ExampleSelection::Initialize(Json::Value* config) {
   fNuVertexXZHist = new TH2D("nu_vtx_XZ", "",
                              100, -1000, 1000, 100, -1000, 1000);
   fGoodNuEHist = new TH1D ("good_nu_energy_hist","",100,0,10);
-  fNuEhist = new TH1D ("nu_energy_hist","",100,0,10);
+  fNuEHist = new TH1D ("nu_energy_hist","",100,0,10);
   fInitialNumuHist = new TH1D("initial_numu","",100,0,10);
   fInitialContaminationHist = new TH1D("initial_contamination","",100,0,10);
+  fGoodNuCCHist = new TH1D("good_nu_CC","",100,0,10);
+  fGoodNuNCHist = new TH1D ("good_nu_NC","",100,0,10);
 
   // Load configuration parameters
   fMyParam = 0;
@@ -74,6 +76,8 @@ void ExampleSelection::Finalize() {
   fNuEHist->Write();
   fInitialNumuHist->Write();
   fInitialContaminationHist->Write();
+  fGoodNuCCHist->Write();
+  fGoodNuNCHist->Write();
 }
 
 
@@ -141,7 +145,7 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
 
     fEndX.push_back(mctrack.End().X());
     fEndY.push_back(mctrack.End().Y());
-    fEndZ.push_back(mctrack.End()s.Z());
+    fEndZ.push_back(mctrack.End().Z());
     fPDGCode.push_back(mctrack.PdgCode());
     bool IsMuon = true;
     bool IsPrimary = (mctrack.Process()=="primary");
@@ -190,9 +194,13 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
     int GoodNuIndex = GoodNuIndices.at(0);
     auto GoodNuE = mctruths.at(GoodNuIndex).GetNeutrino().Nu().E();
     fGoodNuEHist->Fill(GoodNuE);
+    int GoodNuCCNCType = mctruths.at(GoodNuIndex).GetNeutrino().CCNC();
+    if (GoodNuCCNCType ==0 )fGoodNuCCHist->Fill(GoodNuE);
+    if (GoodNuCCNCType ==1 )fGoodNuNCHist->Fill(GoodNuE);
     fGoodNuCount++;
     }
   }
+
 
 
   return true;

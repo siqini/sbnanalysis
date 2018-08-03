@@ -101,6 +101,8 @@ protected:
   TH1D* fNuEHist;
   TH1D* fInitialNumuHist;
   TH1D* fInitialContaminationHist;
+  TH1D* fGoodNuCCHist;
+  TH1D* fGoodNuNCHist;
 };
 
   }  // namespace ExampleAnalysis
