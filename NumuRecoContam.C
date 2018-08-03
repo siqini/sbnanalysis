@@ -6,27 +6,25 @@
 #include <TTreeReaderArray.h>
 #include <algorithm>
 
-void InitialContamination(){
+void NumuRecoContam(){
   TFile *myFile = TFile::Open("output_ExampleAnalysis_ExampleSelection.root");
   if (myFile==0){
     printf("File not correctly opened!\n");
     return;
   } //if the file is not correctly opened, spit out an error message
   TH1D *initialnumu = (TH1D*)myFile->Get("initial_numu");
-  TH1D *initialcontam = (TH1D*)myFile->Get("initial_contamination");
+  TH1D *goodnumu = (TH1D*)myFile->Get("good_nu_energy_hist");
   initialnumu->SetFillColor(kAzure);
-  initialcontam->SetFillColor(kViolet);
+  goodnumu->SetFillColor(kViolet);
 
-  THStack *contamstack = new THStack("contamstack","Contamination in the generated #nu_#mu");
+  THStack *recostack = new THStack("recostack","Generated and reconstructed numus");
   contamstack->Add(initialnumu);
-  contamstack->Add(initialcontam);
+  contamstack->Add(goodnumu);
 
-  contamstack->SetTitle("Contamination in the generated numu; Neutrino energy(GeV); # Events");
+  contamstack->SetTitle("Generated and reconstructed numus; Neutrino energy(GeV); # Events");
   contamstack->Draw("nostack");
   auto legend = new TLegend(0.75,0.75,0.95,0.95);
-  legend->AddEntry(initialnumu,"#nu_#mu");
-  legend->AddEntry(initialcontam,"Contamination");
+  legend->AddEntry(initialnumu,"Generated numu");
+  legend->AddEntry(goodnumu,"Reconstructed numu");
   legend->Draw();
-
-
 }
