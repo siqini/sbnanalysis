@@ -99,6 +99,8 @@ protected:
   TH2D* fNuVertexXZHist; //!< Neutrino vertex XZ projection
   TH1D* fGoodNuEHist;
   TH1D* fNuEHist;
+  TH1D* fInitialNumuHist;
+  TH1D* fInitialContaminationHist;
 };
 
   }  // namespace ExampleAnalysis

@@ -26,6 +26,8 @@ void ExampleSelection::Initialize(Json::Value* config) {
                              100, -1000, 1000, 100, -1000, 1000);
   fGoodNuEHist = new TH1D ("good_nu_energy_hist","",100,0,10);
   fNuEhist = new TH1D ("nu_energy_hist","",100,0,10);
+  fInitialNumuHist = new TH1D("initial_numu","",100,0,10);
+  fInitialContaminationHist = new TH1D("initial_contamination","",100,0,10);
 
   // Load configuration parameters
   fMyParam = 0;
@@ -70,6 +72,8 @@ void ExampleSelection::Finalize() {
   fNuVertexXZHist->Write();
   fGoodNuEHist->Write();
   fNuEHist->Write();
+  fInitialNumuHist->Write();
+  fInitialContaminationHist->Write();
 }
 
 
@@ -123,6 +127,12 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
     // Fill CCNC vector
     fCCNC.push_back(mctruth.GetNeutrino().CCNC());
     //NuEndPos.push_back(mctruth.GetNeutrino().Nu().EndPosition());
+
+    bool IsNumu = (mctruth.GetNeutrino().Nu().PdgCode() == 14);
+    if (IsNumu){
+      fInitialNumuHist->Fill(mctruth.GetNeutrino().Nu().E());
+    }
+    else fInitialContaminationHist->Fill(mctruth.GetNeutrino().Nu().E());
   }
   //Iterate through all product tracks
   for (size_t j=0;j<mctracks.size();j++){
@@ -131,9 +141,9 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
 
     fEndX.push_back(mctrack.End().X());
     fEndY.push_back(mctrack.End().Y());
-    fEndZ.push_back(mctrack.End().Z());
+    fEndZ.push_back(mctrack.End()s.Z());
     fPDGCode.push_back(mctrack.PdgCode());
-    bool IsMuon = (mctrack.PdgCode()==13);
+    bool IsMuon = true;
     bool IsPrimary = (mctrack.Process()=="primary");
     if (IsMuon) {
       fMuCount++;
