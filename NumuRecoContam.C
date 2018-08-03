@@ -18,11 +18,11 @@ void NumuRecoContam(){
   goodnumu->SetFillColor(kViolet);
 
   THStack *recostack = new THStack("recostack","Generated and reconstructed numus");
-  contamstack->Add(initialnumu);
-  contamstack->Add(goodnumu);
+  recostack->Add(initialnumu);
+  recostack->Add(goodnumu);
 
-  contamstack->SetTitle("Generated and reconstructed numus; Neutrino energy(GeV); # Events");
-  contamstack->Draw("nostack");
+  recostack->SetTitle("Generated and reconstructed numus; Neutrino energy(GeV); # Events");
+  recostack->Draw("nostack");
   auto legend = new TLegend(0.75,0.75,0.95,0.95);
   legend->AddEntry(initialnumu,"Generated numu");
   legend->AddEntry(goodnumu,"Reconstructed numu");
