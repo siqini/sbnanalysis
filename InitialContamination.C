@@ -17,7 +17,7 @@ void InitialContamination(){
   initialnumu->SetFillColor(kAzure);
   initialcontam->SetFillColor(kViolet);
 
-  THStack *contamstack = new THStack("contamstack","Contamination in the generated #nu_#mu");
+  THStack *contamstack = new THStack("contamstack","Contamination in the generated numu");
   contamstack->Add(initialnumu);
   contamstack->Add(initialcontam);
 
