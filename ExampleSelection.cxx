@@ -2,6 +2,7 @@
 #include <vector>
 #include <TH2D.h>
 #include <json/json.h>
+#include <cmath>
 #include "gallery/ValidHandle.h"
 #include "canvas/Utilities/InputTag.h"
 #include "nusimdata/SimulationBase/MCTruth.h"
@@ -9,10 +10,20 @@
 #include "lardataobj/MCBase/MCTrack.h"
 #include "lardataobj/MCBase/MCShower.h"
 #include "nusimdata/SimulationBase/MCParticle.h"
+#include "nusimdata/SimulationBase/MCFlux.h"
+#include "larsim/EventWeight/Base/MCEventWeight.h"
 #include "gallery/Event.h"
 #include <TLorentzVector.h>
 #include "ExampleSelection.h"
 #include "ExampleTools.h"
+#include <stdlib.h>
+#include <time.h>
+#include <stdio.h>
+#include <math.h>
+#include <random>
+
+#define PI 3.14159265
+
 
 namespace ana {
   namespace ExampleAnalysis {
@@ -24,12 +35,17 @@ void ExampleSelection::Initialize(Json::Value* config) {
   // Make a histogram
   fNuVertexXZHist = new TH2D("nu_vtx_XZ", "",
                              100, -1000, 1000, 100, -1000, 1000);
-  fGoodNuEHist = new TH1D ("good_nu_energy_hist","",100,0,10);
-  fNuEHist = new TH1D ("nu_energy_hist","",100,0,10);
-  fInitialNumuHist = new TH1D("initial_numu","",100,0,10);
-  fInitialContaminationHist = new TH1D("initial_contamination","",100,0,10);
-  fGoodNuCCHist = new TH1D("good_nu_CC","",100,0,10);
-  fGoodNuNCHist = new TH1D ("good_nu_NC","",100,0,10);
+  fGoodNuEHist = new TH1D ("good_nu_energy_hist","",60,0,6);
+  fNuEHist = new TH1D ("nu_energy_hist","",60,0,6);
+  fInitialNumuHist = new TH1D("initial_numu","",60,0,6);
+  fInitialContaminationHist = new TH1D("initial_contamination","",60,0,6);
+  fGoodNuCCHist = new TH1D("good_nu_CC","",60,0,6);
+  fGoodNuNCHist = new TH1D ("good_nu_NC","",60,0,6);
+  fGoodNuRecoCCHist= new TH1D ("good_nu_reco_CC","",60,0,6);
+  fGoodNuRecoNCHist= new TH1D ("good_nu_reco_NC","",60,0,6);
+  fLeptonEHist = new TH1D ("lepton_energy_hist","",60,0,6);
+  fGoodNuRecoEHist = new TH1D ("good_nu_reco_energy_hist","",60,0,6);
+  fInitialNumuAfterCutHist = new TH1D ("initial_numu_after_cut","",60,0,6);
 
   // Load configuration parameters
   fMyParam = 0;
@@ -63,6 +79,13 @@ void ExampleSelection::Initialize(Json::Value* config) {
   //AddBranch("NuEndPos",&fNuEndPos);
   //AddBranch("MuStartPos",&fMuStartPos);
   AddBranch("diff_length",&fDiffLength);
+  AddBranch("lepton_momenta",&fLeptonMomenta);
+  AddBranch("lepton_energy",&fLeptonEnergy);
+  AddBranch("lepton_X",&fLeptonX);
+  AddBranch("lepton_Y",&fLeptonY);
+  AddBranch("lepton_Z",&fLeptonZ);
+  AddBranch("reco_energy",&fRecoE);
+  AddBranch("lepton_cos_theta",&fLeptonCosTheta);
   // Use some library code
   hello();
 }
@@ -78,6 +101,11 @@ void ExampleSelection::Finalize() {
   fInitialContaminationHist->Write();
   fGoodNuCCHist->Write();
   fGoodNuNCHist->Write();
+  fGoodNuRecoCCHist->Write();
+  fGoodNuRecoNCHist->Write();
+  fLeptonEHist->Write();
+  fGoodNuRecoEHist->Write();
+  fInitialNumuAfterCutHist->Write();
 }
 
 
@@ -111,6 +139,13 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
   //fNuEndPos.clear();
   //fMuStartPos.clear();
   fDiffLength.clear();
+  fLeptonMomenta.clear();
+  fLeptonEnergy.clear();
+  fLeptonX.clear();
+  fLeptonY.clear();
+  fLeptonZ.clear();
+  fRecoE.clear();
+  fLeptonCosTheta.clear();
   fMuCount =0;
   fPrimaryMuCount=0;
   fGoodMuCount=0;
@@ -131,12 +166,19 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
     // Fill CCNC vector
     fCCNC.push_back(mctruth.GetNeutrino().CCNC());
     //NuEndPos.push_back(mctruth.GetNeutrino().Nu().EndPosition());
-
+    auto nu_endX = mctruth.GetNeutrino().Nu().EndX();
+    auto nu_endY = mctruth.GetNeutrino().Nu().EndY();
+    auto nu_endZ = mctruth.GetNeutrino().Nu().EndZ();
+    bool IsInFiducial = ((-260.1<=nu_endX)&&(nu_endX<=260.1))&& ((-271.15<=nu_endY)&&(nu_endY<=271.15))&&((-143.1<=nu_endZ)&&(nu_endZ<=559.6));
     bool IsNumu = (mctruth.GetNeutrino().Nu().PdgCode() == 14);
     if (IsNumu){
       fInitialNumuHist->Fill(mctruth.GetNeutrino().Nu().E());
     }
     else fInitialContaminationHist->Fill(mctruth.GetNeutrino().Nu().E());
+    if (IsNumu && IsInFiducial){
+      fInitialNumuAfterCutHist->Fill(mctruth.GetNeutrino().Nu().E());
+    }
+
   }
   //Iterate through all product tracks
   for (size_t j=0;j<mctracks.size();j++){
@@ -148,7 +190,8 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
     fEndZ.push_back(mctrack.End().Z());
     fPDGCode.push_back(mctrack.PdgCode());
     bool IsMuon = true;
-    bool IsPrimary = (mctrack.Process()=="primary");
+    //bool IsPrimary = (mctrack.Process()=="primary");
+    bool IsPrimary = true;
     if (IsMuon) {
       fMuCount++;
     }
@@ -191,13 +234,57 @@ bool ExampleSelection::ProcessEvent(gallery::Event& ev) {
     }
     if (GoodNuIndices.empty()) continue;
     else {
-    int GoodNuIndex = GoodNuIndices.at(0);
-    auto GoodNuE = mctruths.at(GoodNuIndex).GetNeutrino().Nu().E();
-    fGoodNuEHist->Fill(GoodNuE);
-    int GoodNuCCNCType = mctruths.at(GoodNuIndex).GetNeutrino().CCNC();
-    if (GoodNuCCNCType ==0 )fGoodNuCCHist->Fill(GoodNuE);
-    if (GoodNuCCNCType ==1 )fGoodNuNCHist->Fill(GoodNuE);
-    fGoodNuCount++;
+      int GoodNuIndex = GoodNuIndices.at(0);
+      auto GoodNuE = mctruths.at(GoodNuIndex).GetNeutrino().Nu().E();
+      fGoodNuEHist->Fill(GoodNuE);
+      int GoodNuCCNCType = mctruths.at(GoodNuIndex).GetNeutrino().CCNC();
+      if (GoodNuCCNCType ==0 )fGoodNuCCHist->Fill(GoodNuE);
+      if (GoodNuCCNCType ==1 )fGoodNuNCHist->Fill(GoodNuE);
+      fGoodNuCount++;
+      auto this_lepton_energy = mct.Start().E();
+      auto this_lepton_momentum = mct.Start().Momentum().Vect().Mag();
+      auto this_lepton_X = mct.Start().X();
+      auto this_lepton_Y = mct.Start().Y();
+      auto this_lepton_Z = mct.Start().Z();
+      /*Aug 7*/
+      auto this_lepton_Px = mct.Start().Px();
+      auto this_lepton_Py = mct.Start().Py();
+      auto this_lepton_Pz = mct.Start().Pz();
+      auto this_lepton_P = sqrt(pow(this_lepton_Px, 2.)+pow(this_lepton_Py,2.)+pow(this_lepton_Pz,2.));
+      fLeptonEnergy.push_back(this_lepton_energy);
+      fLeptonEHist->Fill(this_lepton_energy);
+      fLeptonMomenta.push_back(this_lepton_momentum);
+      fLeptonX.push_back(this_lepton_X);
+      fLeptonY.push_back(this_lepton_Y);
+      fLeptonZ.push_back(this_lepton_Z);
+      auto this_lepton_cos_theta = this_lepton_Z/sqrt(pow(this_lepton_X,2)+pow(this_lepton_Y,2)+pow(this_lepton_Z,2));
+      fLeptonCosTheta.push_back(this_lepton_cos_theta);
+      auto m_p = 0.938;
+      auto m_n = 0.940;
+      auto E_B = 0.306;
+      auto m_mu = 0.1057;
+      auto this_reco_energy_top = pow(m_p,2.) - pow((m_n - E_B),2.) - pow(m_mu,2.)+2*(m_n - E_B)*this_lepton_energy;
+      auto this_reco_energy_bottom = (m_n - E_B)-this_lepton_energy + this_lepton_P * this_lepton_cos_theta;
+      double this_reco_energy = 0.5*(this_reco_energy_top/this_reco_energy_bottom);
+      auto current_track_length = fTrackLength.at(k);
+      double efficiency = ((0.2*(atan(current_track_length - 30.)))/PI) + 0.5;
+      //srand(time(NULL));
+      double lower_bound=0.;
+      double upper_bound=1.;
+      std::uniform_real_distribution<double> unif(lower_bound,upper_bound);
+      std::random_device r;
+      std::default_random_engine e1(r());
+      double a_random_double = unif(e1);
+      /*
+      int rndnum = rand()%100;
+      */
+      if (a_random_double<=efficiency){
+        fRecoE.push_back(this_reco_energy);
+        if (GoodNuCCNCType ==0 )fGoodNuRecoCCHist->Fill(this_reco_energy);
+        if (GoodNuCCNCType ==1 )fGoodNuRecoNCHist->Fill(this_reco_energy);
+        fGoodNuRecoEHist->Fill(this_reco_energy);
+      }
+      else continue;
     }
   }
 

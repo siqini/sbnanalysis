@@ -93,6 +93,14 @@ protected:
   //std::vector<Double_t> fNuEndY;
   //std::vector<Double_t> fNuEndZ;
   //std::vector<simb::MCNeutrino> fGoodNu;
+  std::vector<double> fLeptonMomenta;
+  std::vector<double> fLeptonEnergy;
+  std::vector<double> fLeptonX;
+  std::vector<double> fLeptonY;
+  std::vector<double> fLeptonZ;
+  std::vector<double> fRecoE;
+  std::vector<double> fLeptonCosTheta;
+
 
 
   /** Histograms */
@@ -103,6 +111,11 @@ protected:
   TH1D* fInitialContaminationHist;
   TH1D* fGoodNuCCHist;
   TH1D* fGoodNuNCHist;
+  TH1D* fGoodNuRecoCCHist;
+  TH1D* fGoodNuRecoNCHist;
+  TH1D* fLeptonEHist;
+  TH1D* fGoodNuRecoEHist;
+  TH1D* fInitialNumuAfterCutHist;
 };
 
   }  // namespace ExampleAnalysis
